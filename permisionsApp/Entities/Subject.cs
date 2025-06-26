@@ -2,8 +2,8 @@
 {
     public class Subject
     {
-        public List<Permsion> permsions {  get; set; }
+        public List<Permsion> Permsions {  get; set; }
         public string Jmeno { get; set; }
-        public string 
+        public string
     }
 }
