@@ -1,0 +1,21 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    <form id="myForm" >
+    <label>
+        Teď načti QR kód, nebo zadej ručně
+        <input id="text" type="text" />
+    </label>
+    <button type="submit" id="odes">Odeslat</button>
+    </form>
+    <script>
+        document.getElementById("myForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const id = document.getElementById("text").value;
+            window.location.href = `/home/SeznamOpravneni/${id}`;
+        });
+    </script>
+</div>

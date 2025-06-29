@@ -1,6 +1,8 @@
 using permisionsApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using permisionsApp.Entities;
+using mensiTEst;
 
 namespace permisionsApp.Controllers
 {
@@ -15,6 +17,10 @@ namespace permisionsApp.Controllers
 
         public IActionResult Index()
         {
+            if(HttpContext.Session.GetString("UserIsAdmin") == "true")
+            {
+                return RedirectToAction("Input");
+            }
             return View();
         }
 
@@ -27,6 +33,57 @@ namespace permisionsApp.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Input(string jmeno, string heslo)
+        {
+            if(HttpContext.Session.GetString("UserIsLogged") != null)
+            {
+                return View();
+            }
+
+            for (int i = 0; i < Program.AllSubjects.Count; i++)
+            {
+                if (jmeno == Program.AllSubjects[i].Jmeno && heslo == Program.AllSubjects[i].Heslo)
+                {
+                    HttpContext.Session.SetString("UserIsLogged", jmeno);
+                    if (Program.AllSubjects[i].IsAdmin)
+                    {
+                        HttpContext.Session.SetString("UserIsAdmin", "true");
+                    }
+
+                    //Console.WriteLine("nevim");
+                    //Console.WriteLine(HttpContext.Session.GetString("UserIsAdmin"));
+
+                    return View();
+                }
+            }
+            
+            return RedirectToAction("Index");
+        }
+
+        
+        public IActionResult SeznamOpravneni(string id)
+        {
+            if (HttpContext.Session.GetString("UserIsLogged") == null)
+            {
+                RedirectToAction("Index");
+            }
+            Console.WriteLine($"Tvé id je:{id}");
+            Subject subjektNaStranku = new Subject();
+            bool x = false;
+            foreach (Subject s in Program.AllSubjects)
+            {
+                if(s.kodUzivatele == id)
+                {
+                    subjektNaStranku = s;
+                    x =true;
+                    break;
+                }
+            }
+            if (x!)
+            { RedirectToAction("Index"); }  
+            return View(subjektNaStranku);
         }
     }
 }

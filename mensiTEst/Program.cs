@@ -1,4 +1,5 @@
 using permisionsApp.Entities;
+using System.Text.Json;
 
 namespace mensiTEst
 {
@@ -8,11 +9,33 @@ namespace mensiTEst
         public static List<Subject> AllSubjects { get; set; }
         public static void Main(string[] args)
         {
-            //AllSubjects = JsonSerializer.Deserialize<Subject[]>(File.ReadAllText("\\SecretStuff.txt")).ToList();
-            //AllPerms = JsonSerializer.Deserialize<Permsion[]>(File.ReadAllText("\\SecretStuff.txt")).ToList();
+            try
+            {
+                AllSubjects = JsonSerializer.Deserialize<Subject[]>(File.ReadAllText(@"SecretStuff.txt")).ToList();
+                //AllPerms = JsonSerializer.Deserialize<Permsion[]>(File.ReadAllText("\\SecretStuff.txt")).ToList();
+            }
+            catch { 
+            
+            }
+            /* test data */
+            AllSubjects = new List<Subject>();
+            AllSubjects.Add(new Subject(new List<Permsion>(), "Toanir", "123456Ab", true));
+            AllSubjects[0].Permsions.Add(new Permsion("Hugs", true));
+            AllSubjects[0].kodUzivatele = "1F4";
 
+            AllSubjects[0].Permsions.Add(new Permsion("Mòaukání", false));
+            AllSubjects[0].kodUzivatele = "1F4";
 
+            /* test data */
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -29,6 +52,8 @@ namespace mensiTEst
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",
