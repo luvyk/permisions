@@ -19,12 +19,21 @@ namespace mensiTEst
             }
             /* test data */
             AllSubjects = new List<Subject>();
-            AllSubjects.Add(new Subject(new List<Permsion>(), "Toanir", "123456Ab", true));
+            AllSubjects.Add(new Subject(new List<Permsion>(), "Toanir", "123456Ab", true, 0));
             AllSubjects[0].Permsions.Add(new Permsion("Hugs", true));
             AllSubjects[0].kodUzivatele = "1F4";
 
             AllSubjects[0].Permsions.Add(new Permsion("Mòaukání", false));
-            AllSubjects[0].kodUzivatele = "1F4";
+ 
+
+
+
+            AllSubjects.Add(new Subject(new List<Permsion>(), "Granya", "123456Ab", false, 1));
+            AllSubjects[1].Permsions.Add(new Permsion("Hugs", false));
+            AllSubjects[1].kodUzivatele = "FF0";
+
+            AllSubjects[1].Permsions.Add(new Permsion("Drbání", true));
+
 
             /* test data */
             var builder = WebApplication.CreateBuilder(args);

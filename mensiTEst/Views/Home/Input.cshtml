@@ -3,6 +3,8 @@
 *@
 @{
 }
+@using permisionsApp.Entities
+
 <div>
     <form id="myForm" >
     <label>
@@ -19,3 +21,14 @@
         });
     </script>
 </div>
+
+@if (ViewBag.IsAdmin == true)
+{
+    <h2>Admin panel</h2>
+    @foreach(Subject s in Model)
+    {
+        @s.Jmeno
+        @s.kodUzivatele
+        <a href="@Url.ActionLink("AdminSubjectRights", "home", new { s.Id})">Show Permisions</a>
+    }
+}

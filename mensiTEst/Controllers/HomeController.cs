@@ -17,7 +17,7 @@ namespace permisionsApp.Controllers
 
         public IActionResult Index()
         {
-            if(HttpContext.Session.GetString("UserIsAdmin") == "true")
+            if (HttpContext.Session.GetString("UserIsAdmin") == "true")
             {
                 return RedirectToAction("Input");
             }
@@ -37,8 +37,12 @@ namespace permisionsApp.Controllers
 
         public IActionResult Input(string jmeno, string heslo)
         {
-            if(HttpContext.Session.GetString("UserIsLogged") != null)
+            if (HttpContext.Session.GetString("UserIsLogged") != null)
             {
+                if(HttpContext.Session.GetString("UserIsAdmin") == "true")
+                {
+                    ViewBag.IsAdmin = true;
+                }
                 return View();
             }
 
@@ -50,6 +54,8 @@ namespace permisionsApp.Controllers
                     if (Program.AllSubjects[i].IsAdmin)
                     {
                         HttpContext.Session.SetString("UserIsAdmin", "true");
+                        ViewBag.IsAdmin = true;
+                        return View(Program.AllSubjects);
                     }
 
                     //Console.WriteLine("nevim");
@@ -58,11 +64,11 @@ namespace permisionsApp.Controllers
                     return View();
                 }
             }
-            
+
             return RedirectToAction("Index");
         }
 
-        
+
         public IActionResult SeznamOpravneni(string id)
         {
             if (HttpContext.Session.GetString("UserIsLogged") == null)
@@ -74,16 +80,29 @@ namespace permisionsApp.Controllers
             bool x = false;
             foreach (Subject s in Program.AllSubjects)
             {
-                if(s.kodUzivatele == id)
+                if (s.kodUzivatele == id)
                 {
                     subjektNaStranku = s;
-                    x =true;
+                    x = true;
                     break;
                 }
             }
             if (x!)
-            { RedirectToAction("Index"); }  
+            { RedirectToAction("Input"); }
             return View(subjektNaStranku);
         }
+        public IActionResult AdminSubjectRights(int id)
+        {
+            HttpContext.Session.SetString("admSellectedUser", id.ToString());
+            return View(Program.AllSubjects[id]);
+        }
+        public IActionResult AdminSubjectRightsAction(string nazev)
+        {
+            int id = Int32.Parse(HttpContext.Session.GetString("admSellectedUser"));
+            Program.AllSubjects[id].Permsions.First(p => p.Nazev == nazev).Grant = !Program.AllSubjects[id].Permsions.First(p => p.Nazev == nazev).Grant;
+            return View(Program.AllSubjects[id]);
+        }
+
     }
+    
 }
