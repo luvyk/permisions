@@ -73,7 +73,7 @@ namespace permisionsApp.Controllers
         {
             if (HttpContext.Session.GetString("UserIsLogged") == null)
             {
-                RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
             Console.WriteLine($"Tvé id je:{id}");
             Subject subjektNaStranku = new Subject();
@@ -91,16 +91,19 @@ namespace permisionsApp.Controllers
             { RedirectToAction("Input"); }
             return View(subjektNaStranku);
         }
+
         public IActionResult AdminSubjectRights(int id)
         {
             HttpContext.Session.SetString("admSellectedUser", id.ToString());
             return View(Program.AllSubjects[id]);
         }
+
+        [Route("AdminSubjectRightsAction/{nazev}")]
         public IActionResult AdminSubjectRightsAction(string nazev)
         {
             int id = Int32.Parse(HttpContext.Session.GetString("admSellectedUser"));
             Program.AllSubjects[id].Permsions.First(p => p.Nazev == nazev).Grant = !Program.AllSubjects[id].Permsions.First(p => p.Nazev == nazev).Grant;
-            return View(Program.AllSubjects[id]);
+            return RedirectToAction("AdminSubjectRights", "Home", new { id = id });
         }
 
     }

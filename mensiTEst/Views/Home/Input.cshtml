@@ -27,8 +27,10 @@
     <h2>Admin panel</h2>
     @foreach(Subject s in Model)
     {
-        @s.Jmeno
+        <div>
+        @s.Jmeno    
         @s.kodUzivatele
         <a href="@Url.ActionLink("AdminSubjectRights", "home", new { s.Id})">Show Permisions</a>
+        </div>
     }
 }
