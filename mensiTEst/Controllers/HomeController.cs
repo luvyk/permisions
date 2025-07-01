@@ -106,6 +106,12 @@ namespace permisionsApp.Controllers
             return RedirectToAction("AdminSubjectRights", "Home", new { id = id });
         }
 
+        public IActionResult AddPerm()
+        {
+            
+
+            return View();
+        }
     }
     
 }

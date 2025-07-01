@@ -12,3 +12,23 @@ Jméno: @Model.Jmeno
         <a href="@Url.ActionLink("AdminSubjectRightsAction", "home", new { p.Nazev})"> @p.Nazev </a> @p.Grant
     </div>
 }
+<div>
+
+<form asp-controller="Home" asp-action="AddPerm">
+    <label>
+        Název <input name="nazev" type="text"/>
+    </label>
+    <label>
+        <input type="radio" name="povoleno" value="True">
+        True
+    </label><br>
+    <label>
+            <input type="radio" name="povoleno" value="False">
+        False
+    </label>
+        <input name="kod" value="@Model.kodUzivatele" type="text" />
+
+    <button type="submit">Vytvořit nové oprávnění</button>
+</form>
+
+</div>
