@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using permisionsApp.Entities;
 using mensiTEst;
+using System.Text.Json;
+using System.IO;
 
 namespace permisionsApp.Controllers
 {
@@ -68,13 +70,13 @@ namespace permisionsApp.Controllers
             return RedirectToAction("Index");
         }
 
-
         public IActionResult SeznamOpravneni(string id)
         {
             if (HttpContext.Session.GetString("UserIsLogged") == null)
             {
                 return RedirectToAction("Index");
             }
+
             Console.WriteLine($"Tvé id je:{id}");
             Subject subjektNaStranku = new Subject();
             bool x = false;
@@ -94,6 +96,11 @@ namespace permisionsApp.Controllers
 
         public IActionResult AdminSubjectRights(int id)
         {
+            if (HttpContext.Session.GetString("UserIsAdmin") == null)
+            {
+                return RedirectToAction("Index");
+            }
+
             HttpContext.Session.SetString("admSellectedUser", id.ToString());
             return View(Program.AllSubjects[id]);
         }
@@ -101,16 +108,48 @@ namespace permisionsApp.Controllers
         [Route("AdminSubjectRightsAction/{nazev}")]
         public IActionResult AdminSubjectRightsAction(string nazev)
         {
+            if (HttpContext.Session.GetString("UserIsAdmin") == null)
+            {
+                return RedirectToAction("Index");
+            }
+
             int id = Int32.Parse(HttpContext.Session.GetString("admSellectedUser"));
             Program.AllSubjects[id].Permsions.First(p => p.Nazev == nazev).Grant = !Program.AllSubjects[id].Permsions.First(p => p.Nazev == nazev).Grant;
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(Program.AllSubjects, options);
+            System.IO.File.WriteAllText(@"SecretStuff.txt", json);
+
             return RedirectToAction("AdminSubjectRights", "Home", new { id = id });
         }
 
-        public IActionResult AddPerm()
+        public IActionResult AddPerm(string nazev, string povoleno, string kod)
         {
-            
+            if (HttpContext.Session.GetString("UserIsAdmin") == null)
+            {
+                return RedirectToAction("Index");
+            }
 
-            return View();
+
+            bool x = false;
+            if (povoleno == "True")
+            {
+                x = true;
+            } else { x = false; }
+            Permsion p = new Permsion(nazev, x);
+            int id = Int32.Parse(HttpContext.Session.GetString("admSellectedUser"));
+
+            Program.AllSubjects[id].Permsions.Add(p);
+
+            Console.WriteLine(nazev);
+            Console.WriteLine(povoleno);
+            Console.WriteLine(kod);
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(Program.AllSubjects, options);
+            System.IO.File.WriteAllText(@"SecretStuff.txt", json);
+
+            return RedirectToAction("AdminSubjectRights", "Home", new { id = id });
         }
     }
     
