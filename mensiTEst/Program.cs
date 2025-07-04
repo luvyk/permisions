@@ -17,7 +17,9 @@ namespace mensiTEst
             catch { 
             
             }
+            
             /* test data */
+            /*
             AllSubjects = new List<Subject>();
             AllSubjects.Add(new Subject(new List<Permsion>(), "Toanir", "123456Ab", true, 0));
             AllSubjects[0].Permsions.Add(new Permsion("Hugs", true));
@@ -34,7 +36,7 @@ namespace mensiTEst
 
             AllSubjects[1].Permsions.Add(new Permsion("Drbání", true));
 
-
+            */
             /* test data */
             var builder = WebApplication.CreateBuilder(args);
 

@@ -37,7 +37,7 @@ namespace permisionsApp.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Input(string jmeno, string heslo)
+        public IActionResult Input(string? jmeno, string? heslo)
         {
             if (HttpContext.Session.GetString("UserIsLogged") != null)
             {
