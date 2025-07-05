@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.IO;
 using QRCoder;
 using System.Drawing;
+using System.Globalization;
 
 namespace permisionsApp.Controllers
 {
@@ -160,25 +161,41 @@ namespace permisionsApp.Controllers
 
         public IActionResult MaOpravneni()
         {
-            var mojeOpr = Program.AllSubjects.FirstOrDefault(s => s.Jmeno == HttpContext.Session.GetString("UserIsAdmin"));
+            Subject mojeOpr = Program.AllSubjects.FirstOrDefault(s => s.Jmeno == HttpContext.Session.GetString("UserIsLogged"));
 
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
-            using (QRCodeData qrCodeData = qrGenerator.CreateQrCode("The text which should be encoded.", QRCodeGenerator.ECCLevel.H))
+            using (QRCodeData qrCodeData = qrGenerator.CreateQrCode($"http://localhost:5066/home/SeznamOpravneni/{mojeOpr.kodUzivatele}", QRCodeGenerator.ECCLevel.H))
             using (BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData))
-                
-            {
-                byte[] qrCodeImage = qrCode.GetGraphic(1);
 
+            {
+                string s = "";
+                byte[] qrCodeImage = qrCode.GetGraphic(8);
+
+
+
+                /*
                 Console.WriteLine(qrCodeImage.LongLength);
                 Console.WriteLine("-----------------");
-
-                foreach (var image in qrCodeImage)
+                for(int i = 0; i < qrCodeImage.Length; i++)
                 {
-                    Console.WriteLine(image);
+                    s += qrCodeImage[i].ToString();
+                        if(i < qrCodeImage.Length -1)
+                        {
+                            s += ",";
+                        }
+                    //za tento kód bych mìl jít do vìzení
                 }
-            }
+                ViewBag.s = s;
+                Console.WriteLine(s);
 
-            return View(mojeOpr);
+                Je-li ti život milý prosím nech to být.. jinak nech je bùh milostivý
+                */
+
+
+
+                MoukaVajckoStrouha rizek = new MoukaVajckoStrouha(mojeOpr, qrCodeImage);
+                return View(rizek);
+            }
         }
     }
     

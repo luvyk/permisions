@@ -3,8 +3,18 @@
 *@
 @{
 }
+<script>
+    const byteArray = new Uint8Array([@Model.Obrazek ]);
 
-@foreach(var f in Model)
+    const blob = new Blob([byteArray], { type: 'image/png' });
+    const url = URL.createObjectURL(blob);
+
+    const img = document.createElement('img');
+    img.src = url;
+    document.body.appendChild(img);
+</script>
+
+@foreach (var f in Model.Subject.Permsions)
 {
-    
+    <div>@f.Nazev - @f.Grant</div>
 }
