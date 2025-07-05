@@ -5,6 +5,8 @@ using permisionsApp.Entities;
 using mensiTEst;
 using System.Text.Json;
 using System.IO;
+using QRCoder;
+using System.Drawing;
 
 namespace permisionsApp.Controllers
 {
@@ -41,18 +43,21 @@ namespace permisionsApp.Controllers
         {
             if (HttpContext.Session.GetString("UserIsLogged") != null)
             {
-                if(HttpContext.Session.GetString("UserIsAdmin") == "true")
+                if (HttpContext.Session.GetString("UserIsAdmin") == "true")
                 {
                     ViewBag.IsAdmin = true;
                 }
-                return View();
+                //return View();
             }
+            
+
 
             for (int i = 0; i < Program.AllSubjects.Count; i++)
             {
                 if (jmeno == Program.AllSubjects[i].Jmeno && heslo == Program.AllSubjects[i].Heslo)
                 {
                     HttpContext.Session.SetString("UserIsLogged", jmeno);
+
                     if (Program.AllSubjects[i].IsAdmin)
                     {
                         HttpContext.Session.SetString("UserIsAdmin", "true");
@@ -150,6 +155,30 @@ namespace permisionsApp.Controllers
             System.IO.File.WriteAllText(@"SecretStuff.txt", json);
 
             return RedirectToAction("AdminSubjectRights", "Home", new { id = id });
+        }
+
+
+        public IActionResult MaOpravneni()
+        {
+            var mojeOpr = Program.AllSubjects.FirstOrDefault(s => s.Jmeno == HttpContext.Session.GetString("UserIsAdmin"));
+
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            using (QRCodeData qrCodeData = qrGenerator.CreateQrCode("The text which should be encoded.", QRCodeGenerator.ECCLevel.H))
+            using (BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData))
+                
+            {
+                byte[] qrCodeImage = qrCode.GetGraphic(1);
+
+                Console.WriteLine(qrCodeImage.LongLength);
+                Console.WriteLine("-----------------");
+
+                foreach (var image in qrCodeImage)
+                {
+                    Console.WriteLine(image);
+                }
+            }
+
+            return View(mojeOpr);
         }
     }
     
